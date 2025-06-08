@@ -9,6 +9,7 @@ import (
 
 	"github.com/AnisurRahman06046/go_restApi/internal/types"
 	"github.com/AnisurRahman06046/go_restApi/internal/utils/response"
+	"github.com/go-playground/validator/v10"
 )
 
 func New() http.HandlerFunc {
@@ -19,6 +20,16 @@ func New() http.HandlerFunc {
 		if errors.Is(err, io.EOF) {
 			// return the json response
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+		if err != nil {
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+
+		if err := validator.New().Struct(student); err != nil {
+			validatorErrs := err.(validator.ValidationErrors)
+			response.WriteJson(w, http.StatusBadRequest, response.ValidationError(validatorErrs))
 			return
 		}
 		slog.Info("creating student")
