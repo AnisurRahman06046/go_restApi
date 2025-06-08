@@ -42,19 +42,14 @@ import (
 	"time"
 
 	"github.com/AnisurRahman06046/go_restApi/internal/config"
+	"github.com/AnisurRahman06046/go_restApi/internal/http/handlers/student"
 )
 
 func main() {
 	cfg := config.MustLoad()
 
 	router := http.NewServeMux()
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-			return
-		}
-		w.Write([]byte("Welcome to home page"))
-	})
+	router.HandleFunc("POST /api/students", student.New())
 
 	server := &http.Server{
 		Addr:    cfg.HTTPServer.Addr,
