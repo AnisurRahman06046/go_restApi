@@ -9,12 +9,13 @@ import (
 )
 
 type HttpServer struct {
-	adrs string
+	Addr string `yaml:"address"`
 }
+
 type Config struct {
-	Env         string `yaml:"env" env:"ENV" env-required:"true"`
-	StoragePath string `yaml:"storage_path" env-required:"true"`
-	HttpServer  `yaml:"http_server"`
+	Env         string     `yaml:"env" env:"ENV" env-required:"true"`
+	StoragePath string     `yaml:"storage_path" env-required:"true"`
+	HTTPServer  HttpServer `yaml:"http_server"`
 }
 
 func MustLoad() *Config {
