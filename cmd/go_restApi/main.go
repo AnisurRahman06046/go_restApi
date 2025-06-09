@@ -12,13 +12,20 @@ import (
 
 	"github.com/AnisurRahman06046/go_restApi/internal/config"
 	"github.com/AnisurRahman06046/go_restApi/internal/http/handlers/student"
+	"github.com/AnisurRahman06046/go_restApi/internal/storage/sqlite"
 )
 
 func main() {
 	cfg := config.MustLoad()
 
+	storage, err := sqlite.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	slog.Info("storage initialized", slog.String("env", cfg.Env))
+
 	router := http.NewServeMux()
-	router.HandleFunc("POST /api/students", student.New())
+	router.HandleFunc("POST /api/students", student.New(storage))
 
 	server := &http.Server{
 		Addr:    cfg.HTTPServer.Addr,
@@ -42,7 +49,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	err := server.Shutdown(ctx)
+	err = server.Shutdown(ctx)
 	if err != nil {
 		slog.Error("failed to shut down", slog.String("error", err.Error()))
 	}
